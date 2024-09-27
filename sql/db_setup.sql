@@ -69,6 +69,30 @@ INSERT INTO `ms_domain` VALUES (1,'IT'),(2,'Sales'),(3,'Finance'),(4,'Operations
 UNLOCK TABLES;
 
 --
+-- Table structure for table `ms_experience`
+--
+
+DROP TABLE IF EXISTS `ms_experience`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `ms_experience` (
+  `experience_id` int NOT NULL AUTO_INCREMENT,
+  `experience_level` varchar(255) NOT NULL,
+  PRIMARY KEY (`experience_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `ms_experience`
+--
+
+LOCK TABLES `ms_experience` WRITE;
+/*!40000 ALTER TABLE `ms_experience` DISABLE KEYS */;
+INSERT INTO `ms_experience` VALUES (1,'Intern'),(2,'Entry Level'),(3,'Mid Level'),(4,'Senior Level'),(5,'Lead'),(6,'Manager');
+/*!40000 ALTER TABLE `ms_experience` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `ms_role`
 --
 
@@ -105,4 +129,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-27 19:15:28
+-- Dump completed on 2024-09-27 21:09:10

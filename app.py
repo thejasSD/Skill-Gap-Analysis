@@ -27,6 +27,10 @@ class MsDomain(db.Model):
     # Define the relationship to DomainRoleLink
     domain_links = db.relationship('DomainRoleLink', back_populates='domain')
 
+class MsExperience(db.Model):
+    experience_id = db.Column(db.Integer, primary_key=True)
+    experience_level = db.Column(db.String(255), nullable=False)
+
 class DomainRoleLink(db.Model):
     __tablename__ = 'domain_role'
     id = db.Column(db.Integer, primary_key=True)
@@ -50,7 +54,12 @@ def get_data():
     roles = MsRole.query.all()
     role_list = [{'id': role.role_id, 'name': role.role_name} for role in roles]
 
-    return jsonify({'domains': domain_list, 'roles': role_list})
+    # Fetch all experience levels
+    experiences = MsExperience.query.all()
+    experience_list = [{'id': exp.experience_id, 'name': exp.experience_level} for exp in experiences]
+
+    return jsonify({'domains': domain_list, 'roles': role_list, 'experiences': experience_list})
+
 
 @app.route('/get_roles_by_domain', methods=['POST'])
 def get_roles_by_domain():
@@ -64,6 +73,7 @@ def get_roles_by_domain():
 def analyze():
     domain_id = request.json.get('domain_id')
     role_id = request.json.get('role_id')
+    experience_id = request.json.get('experience_id')
 
 
     # Perform your analysis logic here based on the domain_id and role_id

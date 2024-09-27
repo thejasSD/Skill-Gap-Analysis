@@ -7,7 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <h1>Select Domain and Role</h1>
+    <h1>Select Domain, Role, and Experience Level</h1>
     <form id="selection-form">
         <label for="domain-select">Select Domain:</label>
         <select id="domain-select" name="domain" required>
@@ -21,22 +21,37 @@
         </select>
         <br><br>
 
+        <label for="experience-select">Select Experience Level:</label>
+        <select id="experience-select" name="experience" required>
+            <option value="">--Select Experience Level--</option>
+        </select>
+        <br><br>
+
         <button type="submit">Analyze</button>
     </form>
     <div id="result"></div>
 
     <script>
         $(document).ready(function () {
-            // Fetch initial data (domains and roles)
+            // Fetch initial data (domains, roles, and experiences)
             $.getJSON('/get_data', function (data) {
                 var domains = data.domains;
                 var roles = data.roles;
+                var experiences = data.experiences;
 
                 // Populate the domain dropdown
                 $.each(domains, function (index, domain) {
                     $('#domain-select').append($('<option>', {
                         value: domain.id,
                         text: domain.name
+                    }));
+                });
+
+                // Populate the experience dropdown
+                $.each(experiences, function (index, experience) {
+                    $('#experience-select').append($('<option>', {
+                        value: experience.id,
+                        text: experience.name
                     }));
                 });
 
@@ -68,19 +83,24 @@
                 event.preventDefault();
                 var domainId = $('#domain-select').val();
                 var roleId = $('#role-select').val();
+                var experienceId = $('#experience-select').val(); // Get selected experience
 
-                if (domainId && roleId) {
+                if (domainId && roleId && experienceId) { // Include experience in validation
                     $.ajax({
                         url: '/analyze',
                         method: 'POST',
                         contentType: 'application/json',
-                        data: JSON.stringify({ domain_id: domainId, role_id: roleId }),
+                        data: JSON.stringify({
+                            domain_id: domainId,
+                            role_id: roleId,
+                            experience_id: experienceId // Send experience ID for analysis
+                        }),
                         success: function (response) {
                             $('#result').html('<h2>Analysis Result</h2><p>' + response.analysis + '</p>');
                         }
                     });
                 } else {
-                    alert('Please select both domain and role.');
+                    alert('Please select domain, role, and experience level.');
                 }
             });
         });
