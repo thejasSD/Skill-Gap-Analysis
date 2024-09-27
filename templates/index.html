@@ -3,26 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skill Gap Analysis</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Domain and Role Selection</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <div id="app">
-        <h1>Welcome to Skill Gap Analysis</h1>
-        <button id="analyze-btn">Analyze Skills</button>
-        <div id="results"></div>
-    </div>
+    <h1>Select Domain and Role</h1>
+    <form id="selection-form">
+        <label for="domain-select">Select Domain:</label>
+        <select id="domain-select" name="domain" required>
+            <option value="">--Select Domain--</option>
+        </select>
+        <br><br>
+
+        <label for="role-select">Select Role:</label>
+        <select id="role-select" name="role" required>
+            <option value="">--Select Role--</option>
+        </select>
+        <br><br>
+
+        <button type="submit">Analyze</button>
+    </form>
+    <div id="result"></div>
+
     <script>
-        document.getElementById("analyze-btn").addEventListener("click", () => {
-            // Example AJAX call to Flask backend
-            fetch('/analyze', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({"skills": ["Flask", "Python"]})
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById("results").innerHTML = `<p>${data.message}</p><p>Gaps: ${data.gaps.join(", ")}</p>`;
+        $(document).ready(function () {
+            // Fetch initial data (domains and roles)
+            $.getJSON('/get_data', function (data) {
+                var domains = data.domains;
+                var roles = data.roles;
+
+                // Populate the domain dropdown
+                $.each(domains, function (index, domain) {
+                    $('#domain-select').append($('<option>', {
+                        value: domain.id,
+                        text: domain.name
+                    }));
+                });
+
+                // When a domain is selected, fetch related roles
+                $('#domain-select').change(function () {
+                    var domainId = $(this).val();
+                    $('#role-select').empty().append('<option value="">--Select Role--</option>');
+                    if (domainId) {
+                        $.ajax({
+                            url: '/get_roles_by_domain',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ domain_id: domainId }),
+                            success: function (data) {
+                                $.each(data.roles, function (index, role) {
+                                    $('#role-select').append($('<option>', {
+                                        value: role.id,
+                                        text: role.name
+                                    }));
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
+            // Handle form submission for analysis
+            $('#selection-form').submit(function (event) {
+                event.preventDefault();
+                var domainId = $('#domain-select').val();
+                var roleId = $('#role-select').val();
+
+                if (domainId && roleId) {
+                    $.ajax({
+                        url: '/analyze',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ domain_id: domainId, role_id: roleId }),
+                        success: function (response) {
+                            $('#result').html('<h2>Analysis Result</h2><p>' + response.analysis + '</p>');
+                        }
+                    });
+                } else {
+                    alert('Please select both domain and role.');
+                }
             });
         });
     </script>
