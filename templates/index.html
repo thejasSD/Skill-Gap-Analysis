@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Gap Analysis</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div id="app">
+        <h1>Welcome to Skill Gap Analysis</h1>
+        <button id="analyze-btn">Analyze Skills</button>
+        <div id="results"></div>
+    </div>
+    <script>
+        document.getElementById("analyze-btn").addEventListener("click", () => {
+            // Example AJAX call to Flask backend
+            fetch('/analyze', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({"skills": ["Flask", "Python"]})
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("results").innerHTML = `<p>${data.message}</p><p>Gaps: ${data.gaps.join(", ")}</p>`;
+            });
+        });
+    </script>
+</body>
+</html>
