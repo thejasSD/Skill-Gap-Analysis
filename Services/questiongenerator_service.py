@@ -37,10 +37,6 @@ class QuestionGeneratorService:
             logger.info(f'Response received from API: {response}')
             # return response
             return response
-            if questions_type == 'CODING':
-                return json_extractor.parse_question_data(response,chat_history)
-            else:
-                return json_extractor.extract_questions_options(response,chat_history)
         except Exception as e:
             logger.exception(f"Error occurred during the question generation: {e}")
 
