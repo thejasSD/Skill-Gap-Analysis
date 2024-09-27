@@ -2,6 +2,7 @@
 from langchain.schema import AIMessage, HumanMessage, SystemMessage
 from .cohere_model import CohereModel
 from .model_interface import ModelInterface
+from .AiModel import ModelAI
 # from .llama_model import Llama
 
 # Load environment variables from the .env file
@@ -18,6 +19,7 @@ class LanguageModelSelector:
         """
         self.models = {
             'cohere': CohereModel,
+            'ModelAI':ModelAI
             # 'llama': Llama
         }
 

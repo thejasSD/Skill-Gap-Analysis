@@ -5,7 +5,7 @@ from Services.questiongenerator_service import QuestionGeneratorService
 app = Flask(__name__)
 
 # Update the SQLALCHEMY_DATABASE_URI with your MySQL connection details
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345678@localhost/skill_based_analysis'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/skill_based_analysis'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -90,20 +90,14 @@ from flask import request, jsonify
 @app.route('/mcq', methods=['POST'])
 def mcq_question():
     # Get parameters from the POST request's JSON body
-    params = request.form.to_dict()  # Expecting JSON data in the POST body
-    questions_type = str(params.get('questions_type'))
-    number_of_questions = int(params.get('number_of_questions'))
-    level_id = int(params.get('level_id'))
-    category = str(params.get('category'))
-    sub_category = str(params.get('sub_category'))
+    domain_id = request.json.get('domain_id')
+    role_id = request.json.get('role_id')
+    experience_id = request.json.get('experience_id')
+
     # Call the generate_questions method with the unpacked dictionary
-    if params:
-        objQuestionGenerator = QuestionGeneratorService()
-        question_data = objQuestionGenerator.generate_questions(questions_type, number_of_questions, level_id, category,
-                                                        sub_category)
-        return jsonify(question_data)  # Returning the generated questions as JSON
-    else:
-        return jsonify({"error": "No data provided"}), 400
+    objQuestionGenerator = QuestionGeneratorService()
+    question_data = objQuestionGenerator.generate_questions(domain_id,role_id,experience_id)
+    return jsonify(question_data)  # Returning the generated questions as JSON
 
 if __name__ == '__main__':
     app.run()

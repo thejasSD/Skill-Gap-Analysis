@@ -81,13 +81,13 @@
             // Handle form submission for analysis
             $('#selection-form').submit(function (event) {
                 event.preventDefault();
-                var domainId = $('#domain-select').val();
-                var roleId = $('#role-select').val();
-                var experienceId = $('#experience-select').val(); // Get selected experience
+                var domainId = $('#domain-select option:selected').text();
+                var roleId = $('#role-select option:selected').text();
+                var experienceId = $('#experience-select option:selected').text(); // Get selected experience
 
                 if (domainId && roleId && experienceId) { // Include experience in validation
                     $.ajax({
-                        url: '/analyze',
+                        url: '/mcq',
                         method: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({
