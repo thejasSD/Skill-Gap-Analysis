@@ -119,15 +119,38 @@ def questions_page():
 
     return render_template('questionsPage.html', data=data)
 
-@app.route('/skillanaliser')
-def questions_page():
-
+@app.route('/skillanaliser', methods=['POST'])
+def skill_pages():
+    data = request.get_json()
     # Here you could call the question generation function again if needed
     objSkillAnaliser = SkillAnaliserService()
-    question_data = objSkillAnaliser.skill_analis()
-    data = JsonExtractor().extract_json_from_response(question_data)
+    question_data = objSkillAnaliser.skill_analis(data)
+    question_data = format_ai_response(question_data)
+    return question_data
 
-    return data
+
+# Function to clean and format the AI response
+def format_ai_response(response_text):
+        # Remove unnecessary characters like ** and extra spaces/newlines
+        clean_text = response_text.replace("**", "").strip()
+
+        # Split text by new lines and clean up any unwanted blank lines
+        formatted_lines = []
+        for line in clean_text.split("\n"):
+            line = line.strip()  # Remove leading/trailing spaces
+            if line:  # Skip empty lines
+                # Add double line breaks after section titles for better separation
+                if line.endswith(":"):
+                    formatted_lines.append(f"{line}\n\n")  # Double line break after section title
+                # Add a single line break for bullet points
+                elif line.startswith("* "):
+                    formatted_lines.append(f"{line}\n")  # Single line break for bullet points
+                else:
+                    formatted_lines.append(line)
+
+        # Join lines back with a newline separator
+        formatted_text = "\n".join(formatted_lines).strip()
+        return formatted_text
 
 
 if __name__ == '__main__':

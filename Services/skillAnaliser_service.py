@@ -19,8 +19,8 @@ class SkillAnaliserService:
             response, chat_history = selector.invoke_model("ModelAI", "llama3-8b-8192", prompt)
             # response,chat_history = selector.invoke_model("cohere", "command-r", prompt)
             logger.info(f'Response received from API: {response}')
-            obj_format_json = JsonExtractor()
-            response = obj_format_json.extract_json_from_string(response)
+            # obj_format_json = JsonExtractor()
+            # response = obj_format_json.extract_json_from_string(response)
             # return response
             return response
         except Exception as e:

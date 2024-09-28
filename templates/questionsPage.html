@@ -50,7 +50,7 @@
 </head>
 <body>
 
-    <h1>Python Quiz</h1>
+    <h1>MCQ TEST</h1>
 
     <div id="quiz"></div>
 
@@ -143,42 +143,71 @@ function createQuiz() {
 
         // Function to submit the quiz and check all answers
         function submitQuiz() {
-            const resultContainer = document.getElementById('result');
-            let correctAnswers = 0;
-            let totalQuestions = questions.length;
+        const resultContainer = document.getElementById('result');
+        let selectedData = [];
+        let correctAnswers = 0;
+        let totalQuestions = questions.length;
 
-            // Loop through each question
-            questions.forEach((question, index) => {
-                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+        // Loop through each question
+        questions.forEach((question, index) => {
+            const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
 
-                // Check if the selected option is correct
-                if (selectedOption && selectedOption.value === question.correct_option) {
-                    correctAnswers++;
-                }
+            // Gather selected option and question details
+            let userResponse = {
+                question_name: question.question_name,
+                question_description: question.question_description,
+                selected_option: selectedOption ? selectedOption.value : null // null if no option selected
+            };
 
-                // Display feedback for each question
-                const questionContainer = document.querySelectorAll('.question-container')[index];
-                const feedbackElement = document.createElement('p');
-                feedbackElement.classList.add('feedback');
+            selectedData.push(userResponse);
 
-                if (!selectedOption) {
-                    feedbackElement.innerText = 'No option selected!';
-                    feedbackElement.style.color = 'orange';
-                } else if (selectedOption.value === question.correct_option) {
-                    feedbackElement.innerText = 'Correct!';
-                    feedbackElement.style.color = 'green';
-                } else {
-                    feedbackElement.innerText = `Incorrect! The correct answer is option ${question.correct_option}.`;
-                    feedbackElement.style.color = 'red';
-                }
+            // Check if the selected option is correct
+            if (selectedOption && selectedOption.value === question.correct_option) {
+                correctAnswers++;
+            }
 
-                questionContainer.appendChild(feedbackElement);
-            });
+            // Display feedback for each question
+            const questionContainer = document.querySelectorAll('.question-container')[index];
+            const feedbackElement = document.createElement('p');
+            feedbackElement.classList.add('feedback');
 
-            // Display total score
-            resultContainer.innerText = `You got ${correctAnswers} out of ${totalQuestions} correct.`;
-        }
+            if (!selectedOption) {
+                feedbackElement.innerText = 'No option selected!';
+                feedbackElement.style.color = 'orange';
+            } else if (selectedOption.value === question.correct_option) {
+                feedbackElement.innerText = 'Correct!';
+                feedbackElement.style.color = 'green';
+            } else {
+                feedbackElement.innerText = `Incorrect! The correct answer is option ${question.correct_option}.`;
+                feedbackElement.style.color = 'red';
+            }
 
+        });
+
+const quizDataJson = JSON.stringify(selectedData, null, 2);
+        console.log("User responses:", quizDataJson);
+
+        // Send the JSON data to the backend using fetch
+        fetch('/skillanaliser', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: quizDataJson
+        })
+        .then(response => response.text())
+        .then(data => {
+            console.log('Success:', data);
+            resultContainer.innerHTML = data
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const errorMessage = document.createElement('p');
+            errorMessage.innerText = 'Error submitting quiz data.';
+            errorMessage.style.color = 'red';
+            resultContainer.appendChild(errorMessage);
+        });
+    }
         // Initialize the quiz
         createQuiz();
     </script>
