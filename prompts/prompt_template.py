@@ -35,7 +35,6 @@ class PromptTemplate:
 
     def build_skill_analyser_prompt(self, json_data=None):
         """Builds the prompt for analyzing skills based on the provided JSON data."""
-        print("hi")
         json_data =[
         {
             "question_name": "Python Basics",
