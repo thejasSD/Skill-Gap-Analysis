@@ -1,16 +1,23 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from Services.questiongenerator_service import QuestionGeneratorService
-import json
+from flask import render_template, redirect, url_for
+
 
 from Services.skillAnaliser_service import SkillAnaliserService
 from utility.json_data_handler import JsonExtractor
 
 app = Flask(__name__)
+app.secret_key = 's6PbfZCMIJqv76EKXIxeqmcM8iCykRWeIW8flaRO'
 
 # Update the SQLALCHEMY_DATABASE_URI with your MySQL connection details
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Suma%402000@localhost/skill_based_analysis'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345678@localhost/skill_based_analysis'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Configure session to use filesystem (can also use Redis or other options)
+app.config['SESSION_TYPE'] = 'filesystem'
+Session(app)
 
 db = SQLAlchemy(app)
 
@@ -50,11 +57,6 @@ def home():
 @app.route('/details')
 def details_page():
     return render_template('Details.html')
-@app.route('/result')
-def results_page():
-    # Get the question_data from the session
-    question_data = session.get('question_data')
-    return render_template('result.html', data=question_data)
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
@@ -94,20 +96,20 @@ def analyze():
 
 
 
-@app.route('/mcq', methods=['POST'])
-def mcq_question():
-    # Get parameters from the POST request's JSON body
-    domain = request.json.get('domain_id')
-    role= request.json.get('role_id')
-    experience_level = request.json.get('experience_id')
-
-    # Call the generate_questions method with the unpacked dictionary
-    objQuestionGenerator = QuestionGeneratorService()
-    question_data = objQuestionGenerator.generate_questions(domain,role,experience_level)
-    data = JsonExtractor().extract_json_from_response(question_data)
-
-    # Respond with success and the data needed for the redirection
-    return jsonify(success=True, data=data)
+# @app.route('/mcq', methods=['POST'])
+# def mcq_question():
+#     # Get parameters from the POST request's JSON body
+#     # domain = request.json.get('domain_id')
+#     # role= request.json.get('role_id')
+#     # experience_level = request.json.get('experience_id')
+#
+#     # Call the generate_questions method with the unpacked dictionary
+#     # objQuestionGenerator = QuestionGeneratorService()
+#     # question_data = objQuestionGenerator.generate_questions(domain,role,experience_level)
+#     # data = JsonExtractor().extract_json_from_response(question_data)
+#
+#     # Respond with success and the data needed for the redirection
+#     return jsonify(success=True, data=data)
 
 
 @app.route('/questionsPage')
@@ -130,9 +132,15 @@ def skill_pages():
     # Here you could call the question generation function again if needed
     objSkillAnaliser = SkillAnaliserService()
     question_data = objSkillAnaliser.skill_analis(data)
-    question_data = format_ai_response(question_data)
-    return question_data
+    formatted_data = format_ai_response(question_data)
 
+    # Store the result in session or a global variable
+    session['analysis_result'] = formatted_data  # Use session to store the analysis result
+    return jsonify(success=True, redirect_url=url_for('show_result'))
+@app.route('/result')
+def show_result():
+    analysis_result = session.get('analysis_result', "No result available.")
+    return render_template('result.html', analysis_result=analysis_result)
 
 # Function to clean and format the AI response
 def format_ai_response(response_text):

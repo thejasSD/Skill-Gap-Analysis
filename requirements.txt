@@ -74,3 +74,5 @@ tzdata==2024.2
 urllib3==2.2.3
 Werkzeug==3.0.4
 yarl==1.13.0
+langchain_groq
+Flask-Session

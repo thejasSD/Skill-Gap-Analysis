@@ -188,17 +188,20 @@ const quizDataJson = JSON.stringify(selectedData, null, 2);
         console.log("User responses:", quizDataJson);
 
         // Send the JSON data to the backend using fetch
-        fetch('/skillanaliser', {
+    fetch('/skillanaliser', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: quizDataJson
         })
-        .then(response => response.text())
+        .then(response => response.json())
         .then(data => {
-            console.log('Success:', data);
-            resultContainer.innerHTML = `<pre>${data}</pre>`
+            if (data.success) {
+                window.location.href = data.redirect_url; // Redirect to result page
+            } else {
+                console.error('Failed to process quiz data.');
+            }
         })
         .catch(error => {
             console.error('Error:', error);

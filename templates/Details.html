@@ -131,7 +131,7 @@
 
             <div class="form-group">
                 <label for="role-select"> Role:</label>
-                <select id="role-select" name="role" required>
+                <select id="role-select" name="role" required disabled>
                     <option value="">--Select Role--</option>
                 </select>
             </div>
@@ -192,6 +192,7 @@
                                     text: role.name
                                 }));
                             });
+                            $('#role-select').prop('disabled', false);
                         }
                     });
                 }
@@ -208,26 +209,7 @@
             if (domainId && roleId && experienceId) { // Include experience in validation
                 // Show loading spinner
                 $('#loading').show();
-                $.ajax({
-                    url: '/mcq',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        domain_id: domainId,
-                        role_id: roleId,
-                        experience_id: experienceId // Send experience ID for analysis
-                    }),
-                    success: function (response) {
-                        // Hide loading spinner
-                        $('#loading').hide();
-                        window.location.href = `/questionsPage?domain_id=${domainId}&role_id=${roleId}&experience_id=${experienceId}`; // Redirect with parameters
-                    },
-                    error: function (error) {
-                        // Hide loading spinner
-                        $('#loading').hide();
-                        alert('An error occurred while processing your request.');
-                    }
-                });
+                window.location.href = `/questionsPage?domain_id=${domainId}&role_id=${roleId}&experience_id=${experienceId}`; // Redirect with parameters
             } else {
                 alert('Please select domain, role, and experience level.');
             }
