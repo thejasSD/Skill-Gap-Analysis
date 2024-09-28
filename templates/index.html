@@ -8,7 +8,7 @@
 </head>
 <body>
     <h1>Select Domain, Role, and Experience Level</h1>
-    <form id="selection-form">
+    <form id="selection-form"  >
         <label for="domain-select">Select Domain:</label>
         <select id="domain-select" name="domain" required>
             <option value="">--Select Domain--</option>
@@ -32,78 +32,83 @@
     <div id="result"></div>
 
     <script>
-        $(document).ready(function () {
-            // Fetch initial data (domains, roles, and experiences)
-            $.getJSON('/get_data', function (data) {
-                var domains = data.domains;
-                var roles = data.roles;
-                var experiences = data.experiences;
+    $(document).ready(function () {
+        // Fetch initial data (domains, roles, and experiences)
+        $.getJSON('/get_data', function (data) {
+            var domains = data.domains;
+            var roles = data.roles;
+            var experiences = data.experiences;
 
-                // Populate the domain dropdown
-                $.each(domains, function (index, domain) {
-                    $('#domain-select').append($('<option>', {
-                        value: domain.id,
-                        text: domain.name
-                    }));
-                });
-
-                // Populate the experience dropdown
-                $.each(experiences, function (index, experience) {
-                    $('#experience-select').append($('<option>', {
-                        value: experience.id,
-                        text: experience.name
-                    }));
-                });
-
-                // When a domain is selected, fetch related roles
-                $('#domain-select').change(function () {
-                    var domainId = $(this).val();
-                    $('#role-select').empty().append('<option value="">--Select Role--</option>');
-                    if (domainId) {
-                        $.ajax({
-                            url: '/get_roles_by_domain',
-                            method: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify({ domain_id: domainId }),
-                            success: function (data) {
-                                $.each(data.roles, function (index, role) {
-                                    $('#role-select').append($('<option>', {
-                                        value: role.id,
-                                        text: role.name
-                                    }));
-                                });
-                            }
-                        });
-                    }
-                });
+            // Populate the domain dropdown
+            $.each(domains, function (index, domain) {
+                $('#domain-select').append($('<option>', {
+                    value: domain.id,
+                    text: domain.name
+                }));
             });
 
-            // Handle form submission for analysis
-            $('#selection-form').submit(function (event) {
-                event.preventDefault();
-                var domainId = $('#domain-select option:selected').text();
-                var roleId = $('#role-select option:selected').text();
-                var experienceId = $('#experience-select option:selected').text(); // Get selected experience
+            // Populate the experience dropdown
+            $.each(experiences, function (index, experience) {
+                $('#experience-select').append($('<option>', {
+                    value: experience.id,
+                    text: experience.name
+                }));
+            });
 
-                if (domainId && roleId && experienceId) { // Include experience in validation
+            // When a domain is selected, fetch related roles
+            $('#domain-select').change(function () {
+                var domainId = $(this).val();
+                $('#role-select').empty().append('<option value="">--Select Role--</option>');
+                if (domainId) {
                     $.ajax({
-                        url: '/mcq',
+                        url: '/get_roles_by_domain',
                         method: 'POST',
                         contentType: 'application/json',
-                        data: JSON.stringify({
-                            domain_id: domainId,
-                            role_id: roleId,
-                            experience_id: experienceId // Send experience ID for analysis
-                        }),
-                        success: function (response) {
-                            $('#result').html('<h2>Analysis Result</h2><p>' + response.analysis + '</p>');
+                        data: JSON.stringify({ domain_id: domainId }),
+                        success: function (data) {
+                            $.each(data.roles, function (index, role) {
+                                $('#role-select').append($('<option>', {
+                                    value: role.id,
+                                    text: role.name
+                                }));
+                            });
                         }
                     });
-                } else {
-                    alert('Please select domain, role, and experience level.');
                 }
             });
         });
-    </script>
+
+        // Handle form submission for analysis
+        $('#selection-form').submit(function (event) {
+            event.preventDefault();
+            var domainId = $('#domain-select').val();
+            var roleId = $('#role-select').val();
+            var experienceId = $('#experience-select').val(); // Get selected experience
+
+            if (domainId && roleId && experienceId) { // Include experience in validation
+                $.ajax({
+                    url: '/mcq',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        domain_id: domainId,
+                        role_id: roleId,
+                        experience_id: experienceId // Send experience ID for analysis
+                    }),
+                    success: function (response) {
+                        // Redirect with parameters
+                        window.location.href = `/questionsPage?domain_id=${domainId}&role_id=${roleId}&experience_id=${experienceId}`; // Redirect with parameters
+                    },
+                    error: function (error) {
+                        alert('An error occurred while processing your request.');
+                    }
+                });
+            } else {
+                alert('Please select domain, role, and experience level.');
+            }
+        });
+    });
+</script>
+
 </body>
 </html>

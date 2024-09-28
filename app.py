@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from Services.questiongenerator_service import QuestionGeneratorService
+import json
+
+from utility.json_data_handler import JsonExtractor
 
 app = Flask(__name__)
 
 # Update the SQLALCHEMY_DATABASE_URI with your MySQL connection details
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost/skill_based_analysis'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345678@localhost/skill_based_analysis'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -78,13 +81,8 @@ def analyze():
 
     # Perform your analysis logic here based on the domain_id and role_id
     # This is just a placeholder response
-    analysis_result = {
-        'analysis': f'This is the analysis result based on selected domain and role.'
-    }
-    return jsonify(analysis_result)
+    return render_template('questionsPage.html')
 
-
-from flask import request, jsonify
 
 
 @app.route('/mcq', methods=['POST'])
@@ -96,8 +94,26 @@ def mcq_question():
 
     # Call the generate_questions method with the unpacked dictionary
     objQuestionGenerator = QuestionGeneratorService()
-    question_data = objQuestionGenerator.generate_questions(domain_id,role_id,experience_id)
-    return jsonify(question_data)  # Returning the generated questions as JSON
+    question_data = objQuestionGenerator.generate_questions(domain_id, role_id, experience_id)
+    data = JsonExtractor().extract_json_from_response(question_data)
+
+    # Respond with success and the data needed for the redirection
+    return jsonify(success=True, data=data)
+
+
+@app.route('/questionsPage')
+def questions_page():
+    # Retrieve parameters from the URL
+    domain_id = request.args.get('domain_id')
+    role_id = request.args.get('role_id')
+    experience_id = request.args.get('experience_id')
+
+    # Here you could call the question generation function again if needed
+    objQuestionGenerator = QuestionGeneratorService()
+    question_data = objQuestionGenerator.generate_questions(domain_id, role_id, experience_id)
+    data = JsonExtractor().extract_json_from_response(question_data)
+
+    return render_template('questionsPage.html', data=data)
 
 if __name__ == '__main__':
     app.run()

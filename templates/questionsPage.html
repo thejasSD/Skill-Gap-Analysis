@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .question-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin-bottom: 10px;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        #submit-btn {
+            display: block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #submit-btn:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 30px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Python Quiz</h1>
+
+    <div id="quiz"></div>
+
+    <!-- Submit button to check all answers -->
+    <button id="submit-btn" onclick="submitQuiz()">Submit Quiz</button>
+
+    <div id="result"></div>
+
+    <script>
+        // JSON data containing the questions
+        const questions = {{ data|tojson }}
+        // Function to create the quiz UI
+        function createQuiz() {
+        console.log(questions);
+            const quizContainer = document.getElementById('quiz');
+
+            questions.forEach((question, index) => {
+                // Create a container for each question
+                const questionContainer = document.createElement('div');
+                questionContainer.classList.add('question-container');
+
+                // Add the question description
+                const questionElement = document.createElement('p');
+                questionElement.classList.add('question');
+                questionElement.innerText = question.question_description;
+                questionContainer.appendChild(questionElement);
+
+                // Create the options list
+                const optionsList = document.createElement('ul');
+                optionsList.classList.add('options');
+
+                // Add options as radio buttons
+                for (let key in question.options) {
+                    const optionItem = document.createElement('li');
+
+                    const optionInput = document.createElement('input');
+                    optionInput.type = 'radio';
+                    optionInput.name = `question${index}`;
+                    optionInput.value = key;
+
+                    const optionLabel = document.createElement('label');
+                    optionLabel.innerText = question.options[key];
+
+                    optionItem.appendChild(optionInput);
+                    optionItem.appendChild(optionLabel);
+                    optionsList.appendChild(optionItem);
+                }
+
+                questionContainer.appendChild(optionsList);
+
+                // Append the question container to the quiz container
+                quizContainer.appendChild(questionContainer);
+            });
+        }
+
+        // Function to submit the quiz and check all answers
+        function submitQuiz() {
+            const resultContainer = document.getElementById('result');
+            let correctAnswers = 0;
+            let totalQuestions = questions.length;
+
+            // Loop through each question
+            questions.forEach((question, index) => {
+                const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+
+                // Check if the selected option is correct
+                if (selectedOption && selectedOption.value === question.correct_option) {
+                    correctAnswers++;
+                }
+
+                // Display feedback for each question
+                const questionContainer = document.querySelectorAll('.question-container')[index];
+                const feedbackElement = document.createElement('p');
+                feedbackElement.classList.add('feedback');
+
+                if (!selectedOption) {
+                    feedbackElement.innerText = 'No option selected!';
+                    feedbackElement.style.color = 'orange';
+                } else if (selectedOption.value === question.correct_option) {
+                    feedbackElement.innerText = 'Correct!';
+                    feedbackElement.style.color = 'green';
+                } else {
+                    feedbackElement.innerText = `Incorrect! The correct answer is option ${question.correct_option}.`;
+                    feedbackElement.style.color = 'red';
+                }
+
+                questionContainer.appendChild(feedbackElement);
+            });
+
+            // Display total score
+            resultContainer.innerText = `You got ${correctAnswers} out of ${totalQuestions} correct.`;
+        }
+
+        // Initialize the quiz
+        createQuiz();
+    </script>
+
+</body>
+</html>
