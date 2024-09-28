@@ -14,7 +14,7 @@ class SkillAnaliserService:
         """
         try:
 
-            prompt = PromptTemplate().build_skill_analyser_prompt()
+            prompt = PromptTemplate().build_skill_analyser_prompt(json)
             selector = LanguageModelSelector()
             response, chat_history = selector.invoke_model("ModelAI", "llama3-8b-8192", prompt)
             # response,chat_history = selector.invoke_model("cohere", "command-r", prompt)

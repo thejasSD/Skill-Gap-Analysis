@@ -12,6 +12,8 @@ On Windows, use
 Install Mysql:\
 Run the `db_setup.sql` file
 
+Create `.env` using `.env-sample` file
+
 Run the Application:
   
 `python3 app.py` or

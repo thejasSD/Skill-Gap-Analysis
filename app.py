@@ -66,9 +66,14 @@ def questions_page():
     role_id = request.args.get('role_id')
     experience_id = request.args.get('experience_id')
 
+    # Query the database for the names using the IDs
+    domain_name = MsDomain.query.filter_by(domain_id=domain_id).first().domain_name
+    role_name = MsRole.query.filter_by(role_id=role_id).first().role_name
+    experience_name = MsExperience.query.filter_by(experience_id=experience_id).first().experience_level
+
     # Here you could call the question generation function again if needed
     objQuestionGenerator = QuestionGeneratorService()
-    question_data = objQuestionGenerator.generate_questions(domain_id, role_id, experience_id)
+    question_data = objQuestionGenerator.generate_questions(domain_name, role_name, experience_name)
     data = JsonExtractor().extract_json_from_response(question_data)
 
     return render_template('questionsPage.html', data=data)
