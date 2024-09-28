@@ -3,12 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from Services.questiongenerator_service import QuestionGeneratorService
 import json
 
+from Services.skillAnaliser_service import SkillAnaliserService
 from utility.json_data_handler import JsonExtractor
 
 app = Flask(__name__)
 
 # Update the SQLALCHEMY_DATABASE_URI with your MySQL connection details
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Suma%402000@localhost/skill_based_analysis'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345678@localhost/skill_based_analysis'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -91,14 +92,15 @@ def analyze():
 @app.route('/mcq', methods=['POST'])
 def mcq_question():
     # Get parameters from the POST request's JSON body
-    domain_id = request.json.get('domain_id')
-    role_id = request.json.get('role_id')
-    experience_id = request.json.get('experience_id')
+    domain = request.json.get('domain_id')
+    role= request.json.get('role_id')
+    experience_level = request.json.get('experience_id')
 
     # Call the generate_questions method with the unpacked dictionary
     objQuestionGenerator = QuestionGeneratorService()
-    question_data = objQuestionGenerator.generate_questions(domain_id, role_id, experience_id)
+    question_data = objQuestionGenerator.generate_questions(domain,role,experience_level)
     data = JsonExtractor().extract_json_from_response(question_data)
+
     # Respond with success and the data needed for the redirection
     return jsonify(success=True, data=data)
 
@@ -116,6 +118,17 @@ def questions_page():
     data = JsonExtractor().extract_json_from_response(question_data)
 
     return render_template('questionsPage.html', data=data)
+
+@app.route('/skillanaliser')
+def questions_page():
+
+    # Here you could call the question generation function again if needed
+    objSkillAnaliser = SkillAnaliserService()
+    question_data = objSkillAnaliser.skill_analis()
+    data = JsonExtractor().extract_json_from_response(question_data)
+
+    return data
+
 
 if __name__ == '__main__':
     app.run()

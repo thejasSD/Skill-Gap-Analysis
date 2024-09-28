@@ -6,16 +6,25 @@ from utility.logger import logger
 
 
 
-class QuestionGeneratorService:
+class SkillAnaliserService:
 
-    def generate_questions(self, domain,role,experience_level):
+    def skill_analis(self,json=None):
         """
         Entry point to generate questions based on given parameters.
         """
         try:
 
-            question_data = self.generate_question_data(domain,role,experience_level)
-            return question_data
+            prompt = PromptTemplate().build_skill_analyser_prompt()
+            selector = LanguageModelSelector()
+            response, chat_history = selector.invoke_model("ModelAI", "llama3-8b-8192", prompt)
+            # response,chat_history = selector.invoke_model("cohere", "command-r", prompt)
+            logger.info(f'Response received from API: {response}')
+            obj_format_json = JsonExtractor()
+            response = obj_format_json.extract_json_from_string(response)
+            # return response
+            return response
+        except Exception as e:
+            logger.exception(f"Error occurred during the question generation: {e}")
 
         except Exception as e:
             logger.exception(f"Error occurred during the question generation as {e}")
