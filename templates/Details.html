@@ -6,120 +6,153 @@
     <title>Domain and Role Selection</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<style>
-    body {
-    font-family: Arial, sans-serif;
-    background-image: url('/static/Final Background.jpg'); /* Background image */
-    background-size: cover; /* Cover the entire background */
-    background-position: center; /* Center the image */
-    background-repeat: no-repeat; /* Prevent the image from repeating */
-    min-height: auto; /* Ensure the body takes at least the full viewport height */
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center vertically based on content height */
-    align-items: center; /* Center horizontally */
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('/static/Final Background.jpg'); /* Background image */
+            background-size: cover; /* Cover the entire background */
+            background-position: center; /* Center the image */
+            background-repeat: no-repeat; /* Prevent the image from repeating */
+            min-height: auto; /* Ensure the body takes at least the full viewport height */
+            display: flex;
+            flex-direction: column;
+            justify-content: center; /* Center vertically based on content height */
+            align-items: center; /* Center horizontally */
+        }
+
+        #details {
+          background-color: rgba(255, 255, 255, 0.5); /* Set transparent white background */
+        border-radius: 10px;
+        height: 50%; /* Set height to 60% */
+        flex-direction: column; /* Stack children vertically */
+        justify-content: center; /* Center vertically */
+        align-items: center; /* Center horizontally */
+        position: relative; /* Set position relative for the child elements */
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.2);
+        max-width: 500px; /* Set max width to keep it from expanding too much */
+        width: 100%; /* Allow width to adjust */
+        padding: 20px; /* Adjust padding to reduce container height */
+        }
+
+        h1 {
+            color: #333;
+            font-size: 2em; /* Reduce font size for heading */
+            margin-bottom: 40px; /* Adjust bottom margin */
+            text-align: center; /* Center align the heading */
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Reduce the gap between elements */
+        }
+
+        .form-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px; /* Reduce the gap between form groups */
+        }
+
+        .form-group label {
+            font-size: 1.2em;
+            color: #333;
+            flex: 1;
+            text-align: left;
+        }
+
+        .form-group select {
+            width: 60%;
+            padding: 10px;
+            font-size: 1.1em;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            flex: 2;
+        }
+
+        button {
+            background-color: #2575fc;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.2em;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #6a11cb;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        /* Loading spinner styles */
+        #loading {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            font-size: 1.5em;
+            color: #2575fc;
+        }
+        .spinner {
+    border: 8px solid rgba(255, 255, 255, 0.3); /* Light color for spinner */
+    border-top: 8px solid #2575fc; /* Main color for the spinner */
+    border-radius: 50%; /* Circular shape */
+    width: 40px; /* Spinner size */
+    height: 40px; /* Spinner size */
+    animation: spin 1s linear infinite; /* Animation for the spinner */
+    margin: auto; /* Centering the spinner */
 }
 
-#app {
-    background-color: rgba(255, 255, 255, 0.5); /* Set transparent white background */
-    border-radius: 10px;
-        height: 60%;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    max-width: 500px; /* Set max width to keep it from expanding too much */
-    width: 100%; /* Allow width to adjust */
-    text-align: left; /* Align text to left inside the form */
-    padding: 20px; /* Adjust padding to reduce container height */
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
-
-h1 {
-    color: #333;
-    font-size: 2em; /* Reduce font size for heading */
-    margin-bottom: 40px; /* Adjust bottom margin */
-    text-align: center; /* Center align the heading */
-}
-
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px; /* Reduce the gap between elements */
-}
-
-.form-group {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px; /* Reduce the gap between form groups */
-}
-
-.form-group label {
-    font-size: 1.2em;
-    color: #333;
-    flex: 1;
-    text-align: left;
-}
-
-.form-group select {
-    width: 60%;
-    padding: 10px;
-    font-size: 1.1em;
-    border: 2px solid #ddd;
-    border-radius: 5px;
-    flex: 2;
-}
-
-button {
-    background-color: #2575fc;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1.2em;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
-    width: 100%;
-}
-
-button:hover {
-    background-color: #6a11cb;
-}
-
-#result {
-    margin-top: 20px;
-}
-</style>
+    </style>
 </head>
 <body>
-    <div id="app">
-    <h1>Skill Gap Analysis</h1>
-    <form id="selection-form"  >
-        <div class="form-group">
-            <label for="domain-select">Domain:</label>
-            <select id="domain-select" name="domain" required>
-                <option value="">--Select Domain--</option>
-            </select>
-        </div>
+    <div id="details">
+        <h1>Skill Gap Analysis</h1>
+        <form id="selection-form">
+            <div class="form-group">
+                <label for="domain-select">Domain:</label>
+                <select id="domain-select" name="domain" required>
+                    <option value="">--Select Domain--</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="role-select"> Role:</label>
-            <select id="role-select" name="role" required>
-                <option value="">--Select Role--</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="role-select"> Role:</label>
+                <select id="role-select" name="role" required>
+                    <option value="">--Select Role--</option>
+                </select>
+            </div>
 
-        <div class="form-group">
-            <label for="experience-select">Experience Level:</label>
-            <select id="experience-select" name="experience" required>
-                <option value="">--Select Experience Level--</option>
-            </select>
-        </div>
+            <div class="form-group">
+                <label for="experience-select">Experience Level:</label>
+                <select id="experience-select" name="experience" required>
+                    <option value="">--Select Experience Level--</option>
+                </select>
+            </div>
 
-        <button type="submit">Proceed</button>
-    </form>
-</div>
+            <button type="submit">Proceed</button>
+        </form>
+    </div>
+
+        <div id="loading" style="display:none; text-align:center; margin-top:20px;">
+        <div class="spinner"></div>
+    </div>
 
     <script>
-$(document).ready(function () {
+    $(document).ready(function () {
         // Fetch initial data (domains, roles, and experiences)
         $.getJSON('/get_data', function (data) {
             var domains = data.domains;
@@ -173,6 +206,8 @@ $(document).ready(function () {
             var experienceId = $('#experience-select').val(); // Get selected experience
 
             if (domainId && roleId && experienceId) { // Include experience in validation
+                // Show loading spinner
+                $('#loading').show();
                 $.ajax({
                     url: '/mcq',
                     method: 'POST',
@@ -183,9 +218,13 @@ $(document).ready(function () {
                         experience_id: experienceId // Send experience ID for analysis
                     }),
                     success: function (response) {
+                        // Hide loading spinner
+                        $('#loading').hide();
                         window.location.href = `/questionsPage?domain_id=${domainId}&role_id=${roleId}&experience_id=${experienceId}`; // Redirect with parameters
                     },
                     error: function (error) {
+                        // Hide loading spinner
+                        $('#loading').hide();
                         alert('An error occurred while processing your request.');
                     }
                 });
@@ -194,7 +233,6 @@ $(document).ready(function () {
             }
         });
     });
-</script>
-
+    </script>
 </body>
 </html>

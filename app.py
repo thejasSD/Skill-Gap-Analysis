@@ -9,7 +9,7 @@ from utility.json_data_handler import JsonExtractor
 app = Flask(__name__)
 
 # Update the SQLALCHEMY_DATABASE_URI with your MySQL connection details
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345678@localhost/skill_based_analysis'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Suma%402000@localhost/skill_based_analysis'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -50,6 +50,11 @@ def home():
 @app.route('/details')
 def details_page():
     return render_template('Details.html')
+@app.route('/result')
+def results_page():
+    # Get the question_data from the session
+    question_data = session.get('question_data')
+    return render_template('result.html', data=question_data)
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
