@@ -8,7 +8,7 @@ from utility.json_data_handler import JsonExtractor
 app = Flask(__name__)
 
 # Update the SQLALCHEMY_DATABASE_URI with your MySQL connection details
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345678@localhost/skill_based_analysis'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:Suma%402000@localhost/skill_based_analysis'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
@@ -45,7 +45,10 @@ class DomainRoleLink(db.Model):
 
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return render_template('homepage.html')
+@app.route('/details')
+def details_page():
+    return render_template('Details.html')
 
 @app.route('/get_data', methods=['GET'])
 def get_data():
@@ -96,7 +99,6 @@ def mcq_question():
     objQuestionGenerator = QuestionGeneratorService()
     question_data = objQuestionGenerator.generate_questions(domain_id, role_id, experience_id)
     data = JsonExtractor().extract_json_from_response(question_data)
-
     # Respond with success and the data needed for the redirection
     return jsonify(success=True, data=data)
 

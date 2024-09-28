@@ -4,35 +4,122 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Domain and Role Selection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<style>
+    body {
+    font-family: Arial, sans-serif;
+    background-image: url('/static/Final Background.jpg'); /* Background image */
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    min-height: auto; /* Ensure the body takes at least the full viewport height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Center vertically based on content height */
+    align-items: center; /* Center horizontally */
+}
+
+#app {
+    background-color: rgba(255, 255, 255, 0.5); /* Set transparent white background */
+    border-radius: 10px;
+        height: 60%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    max-width: 500px; /* Set max width to keep it from expanding too much */
+    width: 100%; /* Allow width to adjust */
+    text-align: left; /* Align text to left inside the form */
+    padding: 20px; /* Adjust padding to reduce container height */
+}
+
+h1 {
+    color: #333;
+    font-size: 2em; /* Reduce font size for heading */
+    margin-bottom: 40px; /* Adjust bottom margin */
+    text-align: center; /* Center align the heading */
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Reduce the gap between elements */
+}
+
+.form-group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px; /* Reduce the gap between form groups */
+}
+
+.form-group label {
+    font-size: 1.2em;
+    color: #333;
+    flex: 1;
+    text-align: left;
+}
+
+.form-group select {
+    width: 60%;
+    padding: 10px;
+    font-size: 1.1em;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    flex: 2;
+}
+
+button {
+    background-color: #2575fc;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+    width: 100%;
+}
+
+button:hover {
+    background-color: #6a11cb;
+}
+
+#result {
+    margin-top: 20px;
+}
+</style>
 </head>
 <body>
-    <h1>Select Domain, Role, and Experience Level</h1>
+    <div id="app">
+    <h1>Skill Gap Analysis</h1>
     <form id="selection-form"  >
-        <label for="domain-select">Select Domain:</label>
-        <select id="domain-select" name="domain" required>
-            <option value="">--Select Domain--</option>
-        </select>
-        <br><br>
+        <div class="form-group">
+            <label for="domain-select">Domain:</label>
+            <select id="domain-select" name="domain" required>
+                <option value="">--Select Domain--</option>
+            </select>
+        </div>
 
-        <label for="role-select">Select Role:</label>
-        <select id="role-select" name="role" required>
-            <option value="">--Select Role--</option>
-        </select>
-        <br><br>
+        <div class="form-group">
+            <label for="role-select"> Role:</label>
+            <select id="role-select" name="role" required>
+                <option value="">--Select Role--</option>
+            </select>
+        </div>
 
-        <label for="experience-select">Select Experience Level:</label>
-        <select id="experience-select" name="experience" required>
-            <option value="">--Select Experience Level--</option>
-        </select>
-        <br><br>
+        <div class="form-group">
+            <label for="experience-select">Experience Level:</label>
+            <select id="experience-select" name="experience" required>
+                <option value="">--Select Experience Level--</option>
+            </select>
+        </div>
 
-        <button type="submit">Analyze</button>
+        <button type="submit">Proceed</button>
     </form>
-    <div id="result"></div>
+</div>
 
     <script>
-    $(document).ready(function () {
+$(document).ready(function () {
         // Fetch initial data (domains, roles, and experiences)
         $.getJSON('/get_data', function (data) {
             var domains = data.domains;
@@ -96,7 +183,6 @@
                         experience_id: experienceId // Send experience ID for analysis
                     }),
                     success: function (response) {
-                        // Redirect with parameters
                         window.location.href = `/questionsPage?domain_id=${domainId}&role_id=${roleId}&experience_id=${experienceId}`; // Redirect with parameters
                     },
                     error: function (error) {

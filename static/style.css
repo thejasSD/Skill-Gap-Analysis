@@ -1,17 +1,42 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    text-align: center;
-    padding: 50px;
+html, body {
+    height: 100%;
+    margin: 0;
 }
 
+body {
+    font-family: Arial, sans-serif;
+    background-image: url('/static/Final Background.jpg'); /* Background image */
+    background-size: cover; /* Cover the entire background */
+    background-position: center; /* Center the image */
+    background-repeat: no-repeat; /* Prevent the image from repeating */
+    text-align: center;
+}
 #app {
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    max-width: 600px;
-    margin: auto;
+    display: flex; /* Use flexbox for centering */
+    flex-direction: column; /* Stack children vertically */
+    justify-content: center; /* Center vertically */
+    align-items: center; /* Center horizontally */
+    height: 100%; /* Take full height of the page */
+    background: rgba(255, 255, 255, 0); /* Make the background transparent */
+}
+h1 {
+    color: white; /* Change text color to white */
+    margin: 0; /* Remove default margin */
+    font-size: 3em; /* Increase the font size of the heading */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5), /* Shadow effects for 3D look */
+    3px 3px 10px rgba(0, 0, 0, 0.3);
+}
+h2 {
+            margin-bottom: 10px; /* Reduced gap between h2 and p */
+        }
+p {
+    margin-top: 0; /* Remove top margin for p */
+}
+
+.quote {
+    color: white; /* Change text color to white */
+    font-size: 1.2em; /* Set a smaller font size for the quote */
+    margin: 10px 0; /* Add some margin above and below the quote */
 }
 
 button {
@@ -20,6 +45,8 @@ button {
     padding: 10px 20px;
     border: none;
     cursor: pointer;
+    border-radius: 5px; /* Optional: adds rounded corners to the button */
+    margin-top: 20px; /* Space between heading and button */
 }
 
 button:hover {
