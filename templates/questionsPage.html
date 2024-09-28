@@ -142,7 +142,7 @@ function createQuiz() {
 
 
         // Function to submit the quiz and check all answers
-        function submitQuiz() {
+function submitQuiz() {
         const resultContainer = document.getElementById('result');
         let selectedData = [];
         let correctAnswers = 0;
@@ -198,7 +198,7 @@ const quizDataJson = JSON.stringify(selectedData, null, 2);
         .then(response => response.text())
         .then(data => {
             console.log('Success:', data);
-            resultContainer.innerHTML = data
+            resultContainer.innerHTML = `<pre>${data}</pre>`
         })
         .catch(error => {
             console.error('Error:', error);
