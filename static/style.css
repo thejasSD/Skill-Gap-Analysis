@@ -18,6 +18,8 @@ body {
     align-items: center; /* Center horizontally */
     height: 100%; /* Take full height of the page */
     background: rgba(255, 255, 255, 0); /* Make the background transparent */
+    position: relative; /* Set position relative for the child elements */
+    left: -300px; /* Move slightly to the left; adjust this value as needed */
 }
 h1 {
     color: white; /* Change text color to white */
@@ -40,15 +42,34 @@ p {
 }
 
 button {
-    background: #007bff;
+    background: #0056b3; /* Darker shade of the original color */
     color: #fff;
-    padding: 10px 20px;
+    padding: 15px 30px; /* Increased padding for a bigger button */
     border: none;
     cursor: pointer;
-    border-radius: 5px; /* Optional: adds rounded corners to the button */
+    border-radius: 10px; /* Optional: adds rounded corners to the button */
     margin-top: 20px; /* Space between heading and button */
+    font-size: 20px; /* Increased font size for bigger text */
+    font-weight: bold;
+}
+.content {
+    flex: 1; /* Take available space */
+    margin-right: 20px; /* Space to the right of content */
+}
+.image-container {
+    position: absolute; /* Position the container absolutely */
+    top: 50%; /* Center it vertically */
+    transform: translateY(-50%); /* Center it vertically with respect to its height */
+    width: 100%; /* Increase the width for a larger image */
+    max-width: 800px; /* Set a maximum width to prevent it from being too large */
+    right: 0px;
+    bottom:-100px;
 }
 
+.image-container img {
+    width: 100%; /* Make image responsive */
+    height: auto; /* Maintain aspect ratio */
+}
 button:hover {
     background: #0056b3;
 }
