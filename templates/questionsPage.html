@@ -28,10 +28,6 @@
         .options li {
             margin-bottom: 10px;
         }
-        .feedback {
-            margin-top: 20px;
-            font-weight: bold;
-        }
         #submit-btn {
             display: block;
             margin-top: 20px;
@@ -65,50 +61,85 @@
 
     <script>
         // JSON data containing the questions
-        const questions = {{ data|tojson }}
-        // Function to create the quiz UI
-        function createQuiz() {
-        console.log(questions);
-            const quizContainer = document.getElementById('quiz');
+        // Safely get the data from the template, or default to an empty array
+let questions = {{ data|tojson | safe }};
 
-            questions.forEach((question, index) => {
-                // Create a container for each question
-                const questionContainer = document.createElement('div');
-                questionContainer.classList.add('question-container');
+console.log("Original questions data:", questions);
 
-                // Add the question description
-                const questionElement = document.createElement('p');
-                questionElement.classList.add('question');
-                questionElement.innerText = question.question_description;
-                questionContainer.appendChild(questionElement);
+// Convert questions to a JSON-like format if it's a list of lists (assuming each inner list contains question data)
+if (!Array.isArray(questions)) {
+    try {
+        // Attempt to parse if it's a string or list-like data
+        questions = JSON.parse(questions);
+    } catch (error) {
+        console.error("Failed to parse questions data:", error);
+    }
+}
 
-                // Create the options list
-                const optionsList = document.createElement('ul');
-                optionsList.classList.add('options');
-
-                // Add options as radio buttons
-                for (let key in question.options) {
-                    const optionItem = document.createElement('li');
-
-                    const optionInput = document.createElement('input');
-                    optionInput.type = 'radio';
-                    optionInput.name = `question${index}`;
-                    optionInput.value = key;
-
-                    const optionLabel = document.createElement('label');
-                    optionLabel.innerText = question.options[key];
-
-                    optionItem.appendChild(optionInput);
-                    optionItem.appendChild(optionLabel);
-                    optionsList.appendChild(optionItem);
-                }
-
-                questionContainer.appendChild(optionsList);
-
-                // Append the question container to the quiz container
-                quizContainer.appendChild(questionContainer);
-            });
+// Check if questions is an array and transform if necessary
+if (Array.isArray(questions)) {
+    questions = questions.map(question => {
+        if (typeof question === 'string') {
+            try {
+                // If any of the questions are still in string format, attempt to parse them
+                return JSON.parse(question);
+            } catch (error) {
+                console.error("Error parsing question:", question, error);
+                return null;  // Ignore if parsing fails
+            }
         }
+        return question;
+    }).filter(q => q !== null);  // Filter out any null entries from failed parsing
+}
+
+// Function to create the quiz UI
+function createQuiz() {
+    const quizContainer = document.getElementById('quiz');
+
+    // Check if questions is an array before processing
+    if (Array.isArray(questions) && questions.length > 0) {
+        questions.forEach((question, index) => {
+            // Create a container for each question
+            const questionContainer = document.createElement('div');
+            questionContainer.classList.add('question-container');
+
+            // Add the question description
+            const questionElement = document.createElement('p');
+            questionElement.classList.add('question');
+            questionElement.innerText = question.question_description;
+            questionContainer.appendChild(questionElement);
+
+            // Create the options list
+            const optionsList = document.createElement('ul');
+            optionsList.classList.add('options');
+
+            // Add options as radio buttons
+            for (let key in question.options) {
+                const optionItem = document.createElement('li');
+
+                const optionInput = document.createElement('input');
+                optionInput.type = 'radio';
+                optionInput.name = `question${index}`;
+                optionInput.value = key;
+
+                const optionLabel = document.createElement('label');
+                optionLabel.innerText = question.options[key];
+
+                optionItem.appendChild(optionInput);
+                optionItem.appendChild(optionLabel);
+                optionsList.appendChild(optionItem);
+            }
+
+            questionContainer.appendChild(optionsList);
+
+            // Append the question container to the quiz container
+            quizContainer.appendChild(questionContainer);
+        });
+    } else {
+        console.error("Questions is not an array or is empty.");
+    }
+}
+
 
         // Function to submit the quiz and check all answers
         function submitQuiz() {
