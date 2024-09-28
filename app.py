@@ -1,8 +1,8 @@
-from flask import Flask, request, jsonify, render_template, redirect, url_for, session
+from flask import Flask, request, jsonify, session
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from Services.questiongenerator_service import QuestionGeneratorService
-from flask import render_template, redirect, url_for
+from flask import render_template, url_for
 
 
 from Services.skillAnaliser_service import SkillAnaliserService
@@ -82,34 +82,6 @@ def get_roles_by_domain():
     role_list = [{'id': role_link.role.role_id, 'name': role_link.role.role_name} for role_link in roles]
 
     return jsonify({'roles': role_list})
-
-@app.route('/analyze', methods=['POST'])
-def analyze():
-    domain_id = request.json.get('domain_id')
-    role_id = request.json.get('role_id')
-    experience_id = request.json.get('experience_id')
-
-
-    # Perform your analysis logic here based on the domain_id and role_id
-    # This is just a placeholder response
-    return render_template('questionsPage.html')
-
-
-
-# @app.route('/mcq', methods=['POST'])
-# def mcq_question():
-#     # Get parameters from the POST request's JSON body
-#     # domain = request.json.get('domain_id')
-#     # role= request.json.get('role_id')
-#     # experience_level = request.json.get('experience_id')
-#
-#     # Call the generate_questions method with the unpacked dictionary
-#     # objQuestionGenerator = QuestionGeneratorService()
-#     # question_data = objQuestionGenerator.generate_questions(domain,role,experience_level)
-#     # data = JsonExtractor().extract_json_from_response(question_data)
-#
-#     # Respond with success and the data needed for the redirection
-#     return jsonify(success=True, data=data)
 
 
 @app.route('/questionsPage')
